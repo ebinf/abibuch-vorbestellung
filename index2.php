@@ -38,7 +38,7 @@
                         <div class="tab-content" id="v-pills-tabContent">
                             <!--<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"></div>
                             <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>-->
-                            <div class="tab-pane fade" id="tab_ver_pos-tab" role="tabpanel" aria-labelledby="tab_ver_aka-tab">
+                            <div class="tab-pane fade" id="tab_ver_pos-tab" role="tabpanel" aria-labelledby="tab_ver_pos-tab">
                                 <h3>Lieferadresse</h3>
                                 <form class="w-100">
                                     <div class="form-row">
@@ -95,5 +95,5 @@
                         <input type="submit" class="btn btn-secondary float-right" value="Kostenpflichtig bestellen">
                     </form>
                 </div>
-                <script src="./res/glb/step2.js"></script>
+                <script></script>
 <?php echo $footer; ?>

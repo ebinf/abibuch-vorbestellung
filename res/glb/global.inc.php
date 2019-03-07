@@ -1,7 +1,5 @@
 <?php
 
-    $title = "Abibuch 2019 Vorverkauf";
-
     require("database.inc.php");
 
     $header = '<!DOCTYPE html>
@@ -24,10 +22,20 @@
     </body>
 </html>";
 
+
     $con = mysqli_connect($db_host, $db_user, $db_pass, $db_dbas);
     if (!$con) {
-        die("Fehler: konnte nicht mit der Datenbank verbinden.");
-        exit;
+        die("Could not connect to Database.");
     }
+
+    if (!file_exists("local.json")) {
+        die("Language-file missing.");
+    }
+    $translation = json_decode("local.json", true);
+
+    if (!file_exists("config.json")) {
+        die("Config-file missing.");
+    }
+    $config = json_decode("config.json", true);
 
 ?>

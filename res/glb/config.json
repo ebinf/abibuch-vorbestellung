@@ -1,0 +1,164 @@
+{
+    "general": {
+        "title": "Abibuch 2019 Vorverkauf",
+        "order_till": "01.01.2001",
+        "pay_till": "01.01.2001"
+    },
+    "types": [
+        {
+            "name": "sus",
+            "title": "Schüler/in",
+        },
+        {
+            "name": "lul",
+            "title": "Lehrkraft",
+        }
+    ],
+    "fields": {
+        "general": [
+            {
+                "name": "firstname",
+                "label": "Vorname",
+                "type": "text",
+                "width": 6
+            },
+            {
+                "name": "lastname",
+                "label": "Nachname",
+                "type": "text",
+                "width": 6
+            },
+            {
+                "name": "email",
+                "label": "E-Mail-Adresse",
+                "type": "email",
+                "width": 6
+            }
+        ],
+        "types": {
+            "sus": [
+                {
+                    "name": "tutorium",
+                    "label": "Tutorium",
+                    "type": "select",
+                    "options": [
+                        "Q1/2a",
+                        "Q1/2b",
+                        "Q1/2c",
+                        "Q1/2d",
+                        "Q1/2e",
+                        "Q1/2f",
+                        "Q1/2g"
+                    ],
+                    "width": 4
+                }
+            ],
+            "lul": [
+                {
+                    "name": "kuerzel",
+                    "label": "Kürzel",
+                    "type": "text",
+                    "maxlength": 4,
+                    "width": 4
+                }
+            ]
+        },
+        "delivery": [
+            {
+                "name": "postal",
+                "fields": [
+                    {
+                        "name": "address1",
+                        "label": "Straße und Hausnummer",
+                        "type": "text",
+                        "width": 12
+                    },
+                    {
+                        "name": "address2",
+                        "label": "Adresszusatz",
+                        "type": "text",
+                        "required": false,
+                        "width": 12
+                    },
+                    {
+                        "name": "zip",
+                        "label": "PLZ",
+                        "type": "text",
+                        "maxlength": 5,
+                        "width": 4
+                    },
+                    {
+                        "name": "city",
+                        "label": "Wohnort",
+                        "type": "text",
+                        "width": 8
+                    }
+                ]
+            }
+        ]
+    },
+    "product": {
+        "name": "Abibuch",
+        "name_plural": "Abibücher",
+        "description": "300 Seiten, Hardcover",
+        "price": 16.00,
+        "min": 1,
+        "max": 5
+    },
+    "delivery": [
+        {
+            "name": "akademische_feier",
+            "title": "Abholung bei der akademischen Feier",
+            "price": 0,
+            "description": "Ich möchte mein Abibuch bei der akademischen Feier abholen.",
+            "types": ["sus", "lul"],
+            "fieldset": ""
+        },
+        {
+            "name": "fach",
+            "title": "Hinterlegung im Fach",
+            "price": 0,
+            "description": "Mein Abibuch soll in mein Fach gelegt werden.",
+            "types": ["lul"],
+            "fieldset": ""
+        },
+        {
+            "name": "versand",
+            "title": "Lieferung",
+            "price": 5.00,
+            "description": "Ich möchte mein Abibuch per Post zugesendet bekommen.",
+            "types": ["lul"],
+            "fieldset": "postal"
+        },
+    ],
+    "payment": [
+        {
+            "name": "ueberweisung",
+            "title": "Überweisung",
+            "price": 0,
+            "info": "<h3>Kontodaten</h3>
+            <table class=\"table table-borderless table-hover table-sm\">
+                <tr>
+                    <th>Empfänger</th>
+                    <td>Max Mustermann</td>
+                </tr>
+                <tr>
+                    <th>IBAN</th>
+                    <td>DE12 3456 7890 1234 45</td>
+                </tr>
+                <tr>
+                    <th>BIC</th>
+                    <td>DEXXXXXXXXXX</td>
+                </tr>
+                <tr>
+                    <th>Betrag</th>
+                    <td>{{amount}}</td>
+                </tr>
+                <tr>
+                    <th>Verwendungszweck</th>
+                    <td>Abibuch / {{firstname}} {{lastname}} / {{ordernumber}}</td>
+                </tr>
+            </table>"
+        }
+    ]
+}
