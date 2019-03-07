@@ -17,12 +17,12 @@
                                 </td>
                                 <td>
                                     <form class="form-inline float-right">
-                                        <select class="form-control">
-                                            <option>1 Stück</option>
-                                            <option>2 Stück</option>
-                                            <option>3 Stück</option>
-                                            <option>4 Stück</option>
-                                            <option>5 Stück</option>
+                                        <select class="form-control" id="sel_abi_qty">
+                                            <option value="1">1 Stück</option>
+                                            <option value="2">2 Stück</option>
+                                            <option value="3">3 Stück</option>
+                                            <option value="4">4 Stück</option>
+                                            <option value="5">5 Stück</option>
                                         </select>
                                     </form>
                                 </td>
@@ -30,33 +30,33 @@
                         </table>
                     </div>
                     <div class="nav flex-column nav-pills w-100" aria-orientation="vertical" role="tablist">
-                        <a class="nav-item nav-link m-0 active" href="#v-pills-home" data-toggle="pill" aria-controls="v-pills-home" aria-selected="true">Ich möchte mein Abibuch bei der akademischen Feier abholen.</a>
-                        <a class="nav-item nav-link m-0" href="#v-pills-profile" data-toggle="pill" aria-controls="v-pills-profile" aria-selected="false">Mein Abibuch soll in mein Fach gelegt werden.</a>
-                        <a class="nav-item nav-link m-0" href="#v-pills-messages" data-toggle="pill" aria-controls="v-pills-messages" aria-selected="false">Ich möchte mein Abibuch per Post zugesendet bekommen. (+5,00 €)</a>
+                        <a class="nav-item nav-link m-0 active" href="#tab_ver_aka" data-toggle="pill" aria-controls="tab_ver_aka" aria-selected="true">Ich möchte mein Abibuch bei der akademischen Feier abholen.</a>
+                        <a class="nav-item nav-link m-0" href="#tab_ver_fac" data-toggle="pill" aria-controls="tab_ver_fac" aria-selected="false">Mein Abibuch soll in mein Fach gelegt werden.</a>
+                        <a class="nav-item nav-link m-0" href="#tab_ver_pos" data-toggle="pill" aria-controls="tab_ver_pos" aria-selected="false">Ich möchte mein Abibuch per Post zugesendet bekommen. (+5,00 €)</a>
                     </div>
                     <div class="col-10 offset-1 m-2">
                         <div class="tab-content" id="v-pills-tabContent">
-                            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"></div>
-                            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>
-                            <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                            <!--<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"></div>
+                            <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"></div>-->
+                            <div class="tab-pane fade" id="tab_ver_pos-tab" role="tabpanel" aria-labelledby="tab_ver_aka-tab">
                                 <h3>Lieferadresse</h3>
                                 <form class="w-100">
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
-                                            <input type="text" class="form-control" id="inputAddress" placeholder="Straße und Hausnummer">
+                                            <input type="text" class="form-control" id="txt_ver_ad1" placeholder="Straße und Hausnummer">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-12">
-                                            <input type="text" class="form-control" id="inputAddress2" placeholder="Adresszusatz">
+                                            <input type="text" class="form-control" id="txt_ver_ad2" placeholder="Adresszusatz">
                                         </div>
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <input type="text" class="form-control" id="inputZip" placeholder="PLZ" maxlength="5">
+                                            <input type="text" class="form-control" id="txt_ver_plz" placeholder="PLZ" maxlength="5">
                                         </div>
                                         <div class="form-group col-md-8">
-                                            <input type="text" class="form-control" id="inputCity" placeholder="Stadt">
+                                            <input type="text" class="form-control" id="txt_ver_std" placeholder="Stadt">
                                         </div>
                                     </div>
                                 </form>
@@ -68,38 +68,32 @@
                     <h3 class="text-light">Bestellung</h3>
                     <table class="w-100">
                         <tr>
-                            <td style="text-align: right;">3<td>
-                            <td>Abibücher</td>
-                            <td style="text-align: right;">48,00 €</td>
-                        </tr>
-                        <tr>
-                            <td><td>
-                            <td>Rabatt</td>
-                            <td style="text-align: right;">-32,00 €</td>
-                        </tr>
-                        <tr>
-                            <td><td>
-                            <td>Versand</td>
-                            <td style="text-align: right;">5,00 €</td>
+                            <td style="text-align: right;" id="lbl_abi_qty">1<td>
+                            <td id="lbl_abi_plr">Abibuch</td>
+                            <td style="text-align: right;" id="lbl_abi_pre">16,00 €</td>
                         </tr>
                         <tr class="border-top">
                             <td><td>
                             <td>GESAMT</td>
-                            <td style="text-align: right;">21,00 €</td>
+                            <td style="text-align: right;" id="lbl_ges_pre">16,00 €</td>
                         </tr>
                     </table>
                     <br />
-                    <h3 class="text-light">Lieferung an</h3>
-                    <p>Max Mustermann<br />
+                    <h3 class="text-light">Versand</h3>
+                    <p id="lbl_ver_met">Abholung bei der akademischen Feier</p>
+                    <!--<p>Max Mustermann<br />
                     Erdgeschoss<br />
                     Musterstraße 1a<br />
-                    12345 Musterstadt</p>
+                    12345 Musterstadt</p>-->
                     <h3 class="text-light">Bezahl&shy;methode</h3>
                     <p>Überweisung</p>
                     <h3 class="text-light">E-Mail-Adresse</h3>
                     <p>max.mustermann@example.com</p>
                     <hr class="bg-light" />
                     <p class="lead">Bitte stell' sicher, dass alle Angaben korrekt sind, bevor du bestellst!</p>
-                    <a class="btn btn-secondary float-right" href="index3.php">Kostenpflichtig bestellen</a>
+                    <form action="index3.php" method="post">
+                        <input type="submit" class="btn btn-secondary float-right" value="Kostenpflichtig bestellen">
+                    </form>
                 </div>
+                <script src="./res/glb/step2.js"></script>
 <?php echo $footer; ?>

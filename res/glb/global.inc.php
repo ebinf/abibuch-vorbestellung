@@ -1,5 +1,7 @@
 <?php
 
+    $title = "Abibuch 2019 Vorverkauf";
+
     require("database.inc.php");
 
     $header = '<!DOCTYPE html>
@@ -24,7 +26,7 @@
 
     $con = mysqli_connect($db_host, $db_user, $db_pass, $db_dbas);
     if (!$con) {
-        die("Fehler: konnte nicht mit MySQL verbinden.");
+        die("Fehler: konnte nicht mit der Datenbank verbinden.");
         exit;
     }
 

@@ -6,7 +6,7 @@
                 <div class="flex-fill p-3 overflow-auto">
                     <h1 class="display-3">Hallo.</h1>
                     <h3>Bitte gib deine Daten ein, um die Bestellung zu starten.</h3>
-                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseSuS" role="button" aria-expanded="false" aria-controls="collapseSuS">Schüler*in</a>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseSuS" role="button" aria-expanded="false" aria-controls="collapseSuS">Schüler/in</a>
                     <a class="btn btn-primary" data-toggle="collapse" href="#collapseLuL" role="button" aria-expanded="false" aria-controls="collapseLuL">Lehrkraft</a>
                     <div class="accordion pt-3" id="accordionSuSLuL">
                         <div class="collapse" id="collapseSuS" data-parent="#accordionSuSLuL">
