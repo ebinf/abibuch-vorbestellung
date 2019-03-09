@@ -2,16 +2,19 @@
     "general": {
         "title": "Abibuch 2019 Vorverkauf",
         "order_till": "01.01.2001",
-        "pay_till": "01.01.2001"
+        "pay_till": "01.01.2001",
+        "contact_email": "support@ebinf.eu",
+        "greeting": "firstname",
+        "email": "email"
     },
     "types": [
         {
             "name": "sus",
-            "title": "Schüler/in",
+            "title": "Schüler/in"
         },
         {
             "name": "lul",
-            "title": "Lehrkraft",
+            "title": "Lehrkraft"
         }
     ],
     "fields": {
@@ -32,7 +35,7 @@
                 "name": "email",
                 "label": "E-Mail-Adresse",
                 "type": "email",
-                "width": 6
+                "width": 5
             }
         ],
         "types": {
@@ -63,10 +66,8 @@
                 }
             ]
         },
-        "delivery": [
-            {
-                "name": "postal",
-                "fields": [
+        "delivery": {
+            "postal": [
                     {
                         "name": "address1",
                         "label": "Straße und Hausnummer",
@@ -94,14 +95,23 @@
                         "width": 8
                     }
                 ]
-            }
-        ]
+        },
+        "payment": {
+            "bar": [
+                {
+                    "name": "secret",
+                    "label": "Geheimwort für die Bezahlung",
+                    "type": "password",
+                    "width": 12
+                }
+            ]
+        }
     },
     "product": {
         "name": "Abibuch",
         "name_plural": "Abibücher",
         "description": "300 Seiten, Hardcover",
-        "price": 16.00,
+        "price": 16,
         "min": 1,
         "max": 5
     },
@@ -112,7 +122,8 @@
             "price": 0,
             "description": "Ich möchte mein Abibuch bei der akademischen Feier abholen.",
             "types": ["sus", "lul"],
-            "fieldset": ""
+            "fieldset": "",
+            "data": ""
         },
         {
             "name": "fach",
@@ -120,45 +131,28 @@
             "price": 0,
             "description": "Mein Abibuch soll in mein Fach gelegt werden.",
             "types": ["lul"],
-            "fieldset": ""
+            "fieldset": "",
+            "data": "Kürzel: {{type:kuerzel}}"
         },
         {
             "name": "versand",
             "title": "Lieferung",
-            "price": 5.00,
+            "price": 5,
             "description": "Ich möchte mein Abibuch per Post zugesendet bekommen.",
             "types": ["lul"],
-            "fieldset": "postal"
-        },
+            "fieldset": "postal",
+            "data": "{{general:firstname}} {{general:lastname}}<br />{{delivery:address1}}<br />{{delivery:address2}}<br />{{delivery:zip}} {{delivery:city}}"
+        }
     ],
     "payment": [
         {
             "name": "ueberweisung",
             "title": "Überweisung",
             "price": 0,
-            "info": "<h3>Kontodaten</h3>
-            <table class=\"table table-borderless table-hover table-sm\">
-                <tr>
-                    <th>Empfänger</th>
-                    <td>Max Mustermann</td>
-                </tr>
-                <tr>
-                    <th>IBAN</th>
-                    <td>DE12 3456 7890 1234 45</td>
-                </tr>
-                <tr>
-                    <th>BIC</th>
-                    <td>DEXXXXXXXXXX</td>
-                </tr>
-                <tr>
-                    <th>Betrag</th>
-                    <td>{{amount}}</td>
-                </tr>
-                <tr>
-                    <th>Verwendungszweck</th>
-                    <td>Abibuch / {{firstname}} {{lastname}} / {{ordernumber}}</td>
-                </tr>
-            </table>"
+            "info": "ueberweisung",
+            "description": "Ich möchte überweisen.",
+            "fieldset": "",
+            "data": ""
         }
     ]
 }

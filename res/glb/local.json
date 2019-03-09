@@ -1,10 +1,18 @@
 {
-    "welcome_title": "Hallo",
+    "money_format": {
+        "prefix": "",
+        "suffix": "€",
+        "dec_point": ",",
+        "decimals": 2,
+        "thousands_sep": "."
+    },
+    "welcome_title": "Hallo.",
     "welcome_content": "Bitte gib deine Daten ein, um die Bestellung zu starten.",
     "next": "Weiter",
     "title": "Hallo, %s!",
     "piece": "Stück",
     "order": "Bestellung",
+    "total": "GESAMT",
     "delivery": "Versand",
     "payment": "Bezahl&shy;methode",
     "email": "E-Mail-Adresse",
@@ -15,10 +23,12 @@
     "thanks_email": "Du solltest in Kürze eine Bestellbestätigung per E-Mail bekommen. In dieser findest du die Kontodaten für die Überweisung sowie einen Link, mit dem du deine Bestellung überprüfen und stornieren kannst.<br /><br />Wenn du keine Mail erhalten solltest, du Fragen oder Probleme hast, wende dich bitte an %s.",
     "overview": "Bestellübersicht",
     "payment": "Bezahlung",
-    "unpayed": "Offen",
-    "payed": "Bezahlt",
-    "payed_extra": "am %s",
-    "pay_till": "Bitte bezahle deine Bestellung bis zum %s. Andernfalls werden wir deine Bestellung nicht berücksichtigen.",
-    "cancel_lead": "Wenn du noch nicht bezahlt hast, kannst du deine Bestellung hier jederzeit stornieren. Bestell' einfach erneut, wenn du es dir anders überlegst.",
-    "cancel": "Bestellung stornieren"
+    "unpaid": "Offen",
+    "paid": "Bezahlt",
+    "paid_extra": "am %s",
+    "pay_till": "Bitte bezahle bis spätestens zum %s. Andernfalls werden wir deine Bestellung nicht berücksichtigen.",
+    "cancel_lead": "Solange du noch nicht bezahlt hast, kannst du deine Bestellung hier jederzeit stornieren. Bestell' einfach erneut, wenn du es dir anders überlegst.",
+    "cancel": "Bestellung stornieren",
+    "cancel_paid_lead": "Wenn du deine Bestellung stornieren möchtest, obwohl du bereits bezahlt hast, nimm bitte Kontakt mit uns auf.",
+    "cancel_paid": "Kontakt"
 }
