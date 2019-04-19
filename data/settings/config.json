@@ -1,0 +1,205 @@
+{
+    "general": {
+        "title": "Abibuch 2019 Vorverkauf",
+        "rewrite": true,
+        "allow_insecure": false,
+        "locale": "de_DE",
+        "order_till": "01.01.2099",
+        "pay_till": "01.01.2001",
+        "contact_email": "support@ebinf.eu",
+        "firstname": "firstname",
+        "email": "email",
+        "email_name": "{{general:firstname}} {{general:lastname}}",
+        "timeout": 1800,
+        "overview_hide_type": false,
+        "overview_hide_payment": false,
+        "overview_hide_delivery": false
+    },
+    "types": [
+        {
+            "name": "sus",
+            "title": "Schüler/in"
+        },
+        {
+            "name": "lul",
+            "title": "Lehrkraft"
+        }
+    ],
+    "fields": {
+        "general": [
+            {
+                "name": "firstname",
+                "label": "Vorname",
+                "type": "text",
+                "minlength": 2,
+                "width": 6,
+                "autocomplete": "given-name",
+                "show_in_overview": true
+            },
+            {
+                "name": "lastname",
+                "label": "Nachname",
+                "type": "text",
+                "minlength": 2,
+                "width": 6,
+                "autocomplete": "family-name",
+                "show_in_overview": true
+            },
+            {
+                "name": "email",
+                "label": "E-Mail-Adresse",
+                "type": "email",
+                "width": 5,
+                "autocomplete": "email",
+                "show_in_overview": true
+            }
+        ],
+        "types": {
+            "sus": [
+                {
+                    "name": "tutorium",
+                    "label": "Tutorium",
+                    "type": "select",
+                    "options": [
+                        "Q3/4a",
+                        "Q3/4b",
+                        "Q3/4c",
+                        "Q3/4d",
+                        "Q3/4e",
+                        "Q3/4f",
+                        "Q3/4g"
+                    ],
+                    "width": 4,
+                    "show_in_overview": true
+                }
+            ],
+            "lul": [
+                {
+                    "name": "kuerzel",
+                    "label": "Kürzel",
+                    "type": "text",
+                    "pattern": "[a-zA-Z]{3}(F|f)?",
+                    "maxlength": 4,
+                    "width": 4,
+                    "show_in_overview": true
+                }
+            ]
+        },
+        "delivery": {
+            "postal": [
+                    {
+                        "name": "address1",
+                        "label": "Straße und Hausnummer",
+                        "type": "text",
+                        "minlength": 4,
+                        "width": 12,
+                        "autocomplete": "address-line1",
+                        "show_in_overview": true
+                    },
+                    {
+                        "name": "address2",
+                        "label": "Adresszusatz",
+                        "type": "text",
+                        "not_required": true,
+                        "width": 12,
+                        "autocomplete": "address-line2",
+                        "show_in_overview": true
+                    },
+                    {
+                        "name": "zip",
+                        "label": "PLZ",
+                        "type": "text",
+                        "pattern": "[0-9]{5}",
+                        "maxlength": 5,
+                        "width": 4,
+                        "autocomplete": "postal-code",
+                        "show_in_overview": true
+                    },
+                    {
+                        "name": "city",
+                        "label": "Wohnort",
+                        "type": "text",
+                        "minlength": 3,
+                        "width": 8,
+                        "autocomplete": "address-level2",
+                        "show_in_overview": true
+                    }
+                ]
+        },
+        "payment": {
+            "bar": [
+                {
+                    "name": "secret",
+                    "label": "Geheimwort für die Bezahlung",
+                    "type": "password",
+                    "minlength": 3,
+                    "width": 12,
+                    "autocomplete": "new-password",
+                    "show_in_overview": true
+                }
+            ]
+        }
+    },
+    "product": {
+        "name": "Abibuch",
+        "name_plural": "Abibücher",
+        "description": "300 Seiten, Hardcover",
+        "unit": {
+            "prefix": "",
+            "prefix_plural": "",
+            "suffix": "Stück",
+            "suffix_plural": "Stück"
+        },
+        "price": 16.5,
+        "min": 1,
+        "max": 5
+    },
+    "delivery": [
+        {
+            "name": "akademische_feier",
+            "title": "Abholung bei der akademischen Feier",
+            "price": -3.5,
+            "description": "Ich möchte mein Abibuch bei der akademischen Feier abholen.",
+            "fieldset": "",
+            "data": ""
+        },
+        {
+            "name": "fach",
+            "title": "Hinterlegung im Fach",
+            "price": 0,
+            "description": "Mein Abibuch soll in mein Fach gelegt werden.",
+            "types": ["lul"],
+            "fieldset": "",
+            "data": "Kürzel: {{type:kuerzel}}"
+        },
+        {
+            "name": "versand",
+            "title": "Lieferung",
+            "price": 5,
+            "description": "Ich möchte mein Abibuch per Post zugesendet bekommen.",
+            "types": ["lul"],
+            "fieldset": "postal",
+            "data": "{{general:firstname}} {{general:lastname}}<br />{{delivery:address2}}<br />{{delivery:address1}}<br />{{delivery:zip}} {{delivery:city}}"
+        }
+    ],
+    "payment": [
+        {
+            "name": "ueberweisung",
+            "title": "Überweisung",
+            "price": 0,
+            "info": "ueberweisung",
+            "description": "Ich möchte überweisen.",
+            "fieldset": "",
+            "data": ""
+        },
+        {
+            "name": "bar",
+            "title": "Barbezahlung",
+            "price": 3.5,
+            "info": "",
+            "description": "Ich möchte bar bezahlen.",
+            "fieldset": "bar",
+            "data": ""
+        }
+    ]
+}

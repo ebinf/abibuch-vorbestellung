@@ -1,53 +1,141 @@
 <?php
-    require("./res/glb/global.inc.php");
-    echo $header;
+    define('BASEURL', explode("/index.php", $_SERVER["SCRIPT_NAME"])[0]);
+    define('RESDIR', BASEURL . "/res");
+    define('LINKURL', ((isset($_SERVER["HTTPS"]) && (strtolower($_SERVER["HTTPS"]) == "on" || $_SERVER["HTTPS"] == 1)) ? "https://" : "http://") . $_SERVER["HTTP_HOST"]);
+
+    require("./res/global/global.inc.php");
+
+    $request = strtolower(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '/'));
+
+    if (!CONFIG["general"]["allow_insecure"] && (!isset($_SERVER["HTTPS"]) || (strtolower($_SERVER["HTTPS"]) != "on" && $_SERVER["HTTPS"] != 1))) {
+        header("Location: " . str_replace("http://", "https://", ABSPATH) . $request);
+        exit;
+    }
+
+    if(CONFIG["general"]["rewrite"] && stripos($_SERVER["REQUEST_URI"], RELPATH . "/index.php") === 0) {
+        if($request != "/" && substr($request, -1) == '/') {
+            header("Location: " . RELPATH . substr($request, 0, -1));
+        } else {
+            header("Location: " . RELPATH . $request);
+        }
+        exit;
+    }
+
+    if($request != "/" && substr($request, -1) == '/') {
+        header("Location: " . RELPATH . substr($request, 0, -1));
+        exit;
+    }
+
+    if ($request == "/validate") {
+        require("./res/views/validate.php");
+        exit;
+    }
+
+    if ($request == "/voucher") {
+        require("./res/views/voucher.php");
+        exit;
+    }
+
 ?>
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title><?=CONFIG["general"]["title"]?></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="<?=RESDIR?>/bootstrap/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="<?=RESDIR?>/global/style.css" />
+        <link rel="stylesheet" href="<?=RESDIR?>/ionicons/css/ionicons.min.css">
+        <script src="<?=RESDIR?>/bootstrap/js/jquery.min.js"></script>
+        <script src="<?=RESDIR?>/bootstrap/js/bootstrap.min.js"></script>
+        <?php if ($request != "/noscript") { ?>
+            <noscript><meta http-equiv="refresh" content="0; URL=<?=RELPATH?>/noscript"/></noscript>
+        <?php } ?>
+    </head>
+    <body class="d-flex justify-content-center align-items-center flex-column">
+        <div class="d-flex col-xl-9 col-12 p-0 align-items-stretch flex-column flex-sm-row shadow cont">
+            <?php
 
-                <div class="flex-fill p-3 overflow-auto">
-                    <h1 class="display-3"><?=$translation["welcome_title"]?></h1>
-                    <h3><?=$translation["welcome_content"]?></h3>
-                    <?php
-
-                        $buttons = "";
-                        $fieldsets = [];
-                        $globalfields = "";
-
-                        foreach($config["types"] as $type) {
-                            $buttons .= '<a class="btn btn-primary" data-toggle="collapse" href="#cps_' . $type["name"] . '" role="button" aria-expanded="false" aria-controls="cps_' . $type["name"] . '">' . $type["title"] . '</a>' . PHP_EOL;
-                            $fieldsets[$type["name"]] = '';
-                            foreach($config["fields"]["types"][$type["name"]] as $field) {
-                                $fieldsets[$type["name"]] .= ext_field($field);
-                            }
-                        }
-
-                        foreach($config["fields"]["general"] as $field) {
-                            $globalfields .= ext_field($field);
-                        }
-
-                        if (sizeof($config["types"]) > 1) {
-                            echo $buttons;
-                            echo '<div class="accordion pt-3" id="acd_tps">';
-                            foreach($config["types"] as $type) {
-                                echo '<div class="collapse" id="cps_' . $type["name"] . '" data-parent="#acd_tps">
-                                <form action="index2.php" method="post"><div class="form-row">';
-                                echo $globalfields;
-                                echo $fieldsets[$type["name"]];
-                                echo '<div class="form-group col-md-3"><button type="submit" class="btn btn-primary btn-block">' . $translation["next"] . '</button></div>';;
-                                echo '</div>
-                        </form>
+                function alert($type, $title, $text) {
+                    echo '<div class="fixed-top">
+                        <div class="alert alert-dismissible alert-' . $type . ' fade show">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <h4 class="alert-heading">' . $title . '</h4>
+                            <p class="mb-0">' . $text . '</p>
+                        </div>
                     </div>';
-                            }
-                            echo '</div>';
+                }
+
+                $expl = explode("/", $request);
+                if (sizeof($expl) > 1 && $expl[1] == "o") {
+                    if (sizeof($expl) >= 3 && strlen($expl[2]) > 0 && strlen($expl[3]) == 16) {
+                        $query = $con->query("SELECT * FROM " . DBPREFIX . "orders WHERE ordernr = '" . $con->real_escape_string($expl[2]) . "' && secret = '" . $con->real_escape_string($expl[3]) . "'");
+                        if ($query->num_rows != 1) {
+                            header("Location: " . RELPATH . "/not-found");
+                            exit;
                         } else {
-                            echo '<form class="pt-3" action="index2.php" method="post"><div class="form-row">';
-                            echo $globalfields;
-                            echo $fieldsets[$config["types"][0]["name"]];
-                            echo '<div class="form-group col-md-3"><button type="submit" class="btn btn-primary btn-block">' . $translation["next"] . '</button></div>
-                            </div></form>';
+                            require("./res/views/overview.php");
                         }
-                    ?>
-                </div>
-                <div class="p-0 col-4 float-right d-none d-sm-block">
-                    <img src="./res/img/spotlight.png" class="float-right img-fluid" style="width: 100%; height: 100%;" />
-                </div>
-<?php echo $footer; ?>
+                    } else {
+                        header("Location: " . RELPATH . "/not-found");
+                        exit;
+                    }
+                } else {
+                    switch ($request) {
+                        case "/cancel":
+                            if (isset($_POST["ordernr"]) && isset($_POST["secret"]) && isset($_POST["token"]) && $con->query("UPDATE " . DBPREFIX . "orders SET status = 'ordered,cancelled', cancelled_timestamp = CURRENT_TIMESTAMP WHERE ordernr='" . $con->real_escape_string($_POST["ordernr"]) . "' AND secret='" . $con->real_escape_string($_POST["secret"]) . "' AND MD5(timestamp)='" . $con->real_escape_string($_POST["token"]) . "'")) {
+                                alert("success", TRANSLATION["alerts"]["cancel_title"], TRANSLATION["alerts"]["cancel_message"]);
+                                require("./res/views/home.php");
+                                break;
+                            } else {
+                                header("Location: " . RELPATH . "/error");
+                                exit;
+                            }
+                        case "/cancelled":
+                            alert("info", TRANSLATION["alerts"]["cancelled_title"], TRANSLATION["alerts"]["cancelled_message"]);
+                            require("./res/views/home.php");
+                            break;
+                        case "/not-found":
+                            alert("danger", TRANSLATION["alerts"]["not_found_title"], TRANSLATION["alerts"]["not_found_message"]);
+                            require("./res/views/home.php");
+                            break;
+                        case "/error":
+                            alert("danger", TRANSLATION["alerts"]["error_title"], sprintf(TRANSLATION["alerts"]["error_message"], '<a class="alert-link" href="mailto:' . CONFIG["general"]["contact_email"] . '">' . CONFIG["general"]["contact_email"] . '</a>'));
+                            require("./res/views/home.php");
+                            break;
+                        case "/missing":
+                            alert("danger", TRANSLATION["alerts"]["missing_title"], TRANSLATION["alerts"]["missing_message"]);
+                            require("./res/views/home.php");
+                            break;
+
+                        case "":
+                        case "/":
+                            if (strtotime(CONFIG["general"]["order_till"]) > time()) {
+                                require("./res/views/home.php");
+                            } else {
+                                require("./res/views/noorders.php");
+                            }
+                            break;
+                        case "/checkout":
+                            if (strtotime(CONFIG["general"]["order_till"]) > time()) {
+                                require("./res/views/checkout.php");
+                            } else {
+                                require("./res/views/noorders.php");
+                            }
+                            break;
+                        case "/noscript":
+                            require("./res/views/noscript.php");
+                            break;
+                        case "/thanks":
+                            require("./res/views/thanks.php");
+                            break;
+                        default:
+                            header("Location: " . (strlen(RELPATH) == 0 ? "/" : RELPATH));
+                            exit;
+                    }
+                }
+
+            ?>
+        </div>
+    </body>
+</html>
