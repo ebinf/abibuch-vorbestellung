@@ -11,24 +11,28 @@
         <?php
 
             if (isset($_POST["token"])) {
-                if ($con->query("SELECT * FROM " . DBPREFIX . "vouchers WHERE code = '" . $con->real_escape_string($_POST["frm_add_cde"]) . "'")->num_rows >= 1) {
-                    alert("danger", TRANSLATION["alerts"]["voucher_code_duplicate_title"], TRANSLATION["alerts"]["voucher_code_duplicate_message"]);
-                } elseif (strlen($_POST["frm_add_cde"]) != 15 || !is_numeric($_POST["frm_add_val"])) {
-                    alert("danger", TRANSLATION["alerts"]["missing_title"], TRANSLATION["alerts"]["missing_message"]);
+                if (base64_decode($_POST["token"]) == md5("vochers_add" . $user["id"])) {
+                    if ($con->query("SELECT * FROM " . DBPREFIX . "vouchers WHERE code = '" . $con->real_escape_string($_POST["frm_add_cde"]) . "'")->num_rows >= 1) {
+                        alert("danger", TRANSLATION["alerts"]["voucher_code_duplicate_title"], TRANSLATION["alerts"]["voucher_code_duplicate_message"]);
+                    } elseif (strlen($_POST["frm_add_cde"]) != 15 || !is_numeric($_POST["frm_add_val"])) {
+                        alert("danger", TRANSLATION["alerts"]["missing_title"], TRANSLATION["alerts"]["missing_message"]);
+                    } else {
+                        $con->query("INSERT INTO " . DBPREFIX . "vouchers (id, timestamp, value, code, order_id, comment, userid) VALUES (NULL, CURRENT_TIMESTAMP, '" . $con->real_escape_string($_POST["frm_add_val"]) . "', '" . strtoupper($con->real_escape_string($_POST["frm_add_cde"])) . "', 0, '" . strip_tags($con->real_escape_string($_POST["frm_add_cmt"])) . "', '" . $user["id"] . "')");
+                        $_SESSION["alert"] = ["success", "added_successfully"];
+                        header("Location: " . ADMIN . "/vouchers/" . $con->insert_id);
+                        exit;
+                    }
                 } else {
-                    $con->query("INSERT INTO " . DBPREFIX . "vouchers (id, timestamp, value, code, order_id, comment, userid) VALUES (NULL, CURRENT_TIMESTAMP, '" . $con->real_escape_string($_POST["frm_add_val"]) . "', '" . strtoupper($con->real_escape_string($_POST["frm_add_cde"])) . "', 0, '" . strip_tags($con->real_escape_string($_POST["frm_add_cmt"])) . "', '" . $user["id"] . "')");
-                    $_SESSION["alert"] = ["success", "added_successfully"];
-                    header("Location: " . ADMIN . "/vouchers");
-                    exit;
+                    alert("danger", TRANSLATION["alerts"]["admin_error_title"], TRANSLATION["alerts"]["admin_error_message"]);
                 }
             }
 
         ?>
         <form action="<?=ADMIN?>/vouchers/add" method="POST" id="frm_add">
-            <input type="hidden" name="token" value="<?=base64_encode(md5(time()))?>" />
+            <input type="hidden" name="token" value="<?=base64_encode(md5("vochers_add" . $user["id"]))?>" />
             <h1>
                 <?=TRANSLATION["add"]?>
-                <span class="d-inline-block">
+                <span class="d-block d-sm-inline-block">
                     <a class="text-muted dark-on-hover" onclick="if (document.getElementById('frm_add').reportValidity() == true) $('#frm_add').submit();" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["save_close"]?>" style="cursor: pointer;"><i class="ion-md-checkmark"></i></a>
                     <a class="text-muted dark-on-hover" href="<?=ADMIN?>/vouchers" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["close"]?>"><i class="ion-md-close"></i></a>
                 </span>
@@ -127,7 +131,7 @@
                             $_SESSION["alert"] = ["danger", "admin_error"];
                         }
                         if ($redirect) {
-                            header("Location: " . ADMIN . "/vouchers");
+                            header("Location: " . ADMIN . "/vouchers/" . $expl[3]);
                             exit;
                         }
                     }
@@ -137,7 +141,7 @@
                     <input type="hidden" name="token" value="<?=base64_encode(md5($voucher["timestamp"] . $voucher["code"] . $voucher["id"]))?>" />
                     <h1>
                         <?=TRANSLATION["edit"]?>
-                        <span class="d-inline-block">
+                        <span class="d-block d-sm-inline-block">
                             <a class="text-muted dark-on-hover" onclick="if (document.getElementById('frm_edt').reportValidity() == true) $('#frm_edt').submit();" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["save_close"]?>" style="cursor: pointer;"><i class="ion-md-checkmark"></i></a>
                             <a class="text-muted dark-on-hover" href="<?=ADMIN?>/vouchers" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["close"]?>"><i class="ion-md-close"></i></a>
                         </span>
@@ -270,7 +274,7 @@
                 <?php
 
                     if($voucher["order_id"] != 0) {
-                        $_SESSION["alert"] = ["danger", TRANSLATION["alerts"]["admin_error_title"], TRANSLATION["voucher_no_editing"]];
+                        $_SESSION["alert"] = ["danger", [TRANSLATION["alerts"]["admin_error_title"], TRANSLATION["voucher_no_editing"]]];
                         header("Location: " . ADMIN . "/vouchers");
                         exit;
                     }
@@ -305,7 +309,7 @@
         <?php } else { ?>
             <h1>
                 <?=TRANSLATION["details"]?>
-                <span class="d-inline-block">
+                <span class="d-block d-sm-inline-block">
                     <a href="<?=ADMIN?>/vouchers/<?=$voucher["id"]?>/edit" class="text-muted dark-on-hover" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["edit"]?>"><i class="ion-md-create"></i></a>
                     <a href="<?=ADMIN?>/vouchers/<?=$voucher["id"]?>/print" target="_blank" class="text-muted dark-on-hover" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["voucher_print"]?>"><i class="ion-md-gift"></i></a>
                     <?php if ($voucher["order_id"] == 0) { ?>
@@ -328,7 +332,7 @@
                     <th class="d-none d-sm-block"><?=TRANSLATION["voucher_value"]?></th>
                     <td>
                         <p class="d-block d-sm-none text-bold text-uppercase small"><?=TRANSLATION["voucher_value"]?></p>
-                        <?=money($voucher["value"])?></span>
+                        <?=money($voucher["value"])?>
                     </td>
                 </tr>
                 <tr>
@@ -339,17 +343,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <th class="d-none d-sm-block"><?=TRANSLATION["created_by"]?></th>
+                    <th class="d-none d-sm-block"><?=TRANSLATION["created_by_at"]?></th>
                     <td class="text-break">
-                        <p class="d-block d-sm-none text-bold text-uppercase small"><?=TRANSLATION["created_by"]?></p>
-                        <?=$con->query("SELECT * FROM " . DBPREFIX . "users WHERE id=" . $voucher["userid"])->fetch_assoc()["name"]?>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="d-none d-sm-block"><?=TRANSLATION["created_at"]?></th>
-                    <td>
-                        <p class="d-block d-sm-none text-bold text-uppercase small"><?=TRANSLATION["created_at"]?></p>
-                        <?=date(TRANSLATION["date_time_format"]["datetime_long"], strtotime($voucher["timestamp"]))?>
+                        <p class="d-block d-sm-none text-bold text-uppercase small"><?=TRANSLATION["created_by_at"]?></p>
+                        <?=$con->query("SELECT * FROM " . DBPREFIX . "users WHERE id=" . $voucher["userid"])->fetch_assoc()["name"]?> / <?=date(TRANSLATION["date_time_format"]["datetime_long"], strtotime($voucher["timestamp"]))?>
                     </td>
                 </tr>
                 <tr>
@@ -377,7 +374,7 @@
 <?php } else { ?>
     <h1>
         <?=TRANSLATION["vouchers"]?>
-        <span class="d-inline-block">
+        <span class="d-block d-sm-inline-block">
             <span id="vou_btn_umr">
                 <a href="<?=ADMIN?>/vouchers/add" class="text-muted dark-on-hover" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["add"]?>" id="vou_btn_add"><i class="ion-md-add"></i></a>
                 <a class="text-muted dark-on-hover" data-toggle="tooltip" data-placement="bottom" title="<?=TRANSLATION["search"]?>" id="vou_btn_src"><i class="ion-md-search"></i></a>
@@ -392,7 +389,7 @@
             </span>
         </span>
     </h1>
-    <div class="d-flex flex-column flex-sm-row">
+    <div class="d-flex flex-column flex-sm-row flex-wrap">
         <div class="form-group p-0 shadow col-12 col-sm-6 col-md-4 col-xl-2 mr-2" id="vou_tlb_src" style="display: none;">
             <input type="text" class="form-control" placeholder="<?=TRANSLATION["search"]?>..." id="vou_src_txt" />
         </div>
@@ -449,7 +446,7 @@
                                     ?>
                                 </td>
                                 <td><?=money($row["value"])?></td>
-                                <td><?=substr($row["comment"], 0, 60) . (strlen($row["comment"]) > 60 ? "" : "")?></td>
+                                <td><?=substr($row["comment"], 0, 60) . (strlen($row["comment"]) > 60 ? "&hellip;" : "")?></td>
                             </tr>
                             <?php
                         }
@@ -492,7 +489,7 @@
             }
 
             function filter() {
-                status = $("#vou_flt_sta").val()
+                status = $("#vou_flt_sta").val();
                 if (status == "all" || !$(".vou_tlb_flt").is(":visible")) {
                     $("#vou_tbl>tbody>tr").each(function() {
                         $(this).addClass("filter");
@@ -517,13 +514,15 @@
                         }
                     }).addClass("filter");
                 }
-                if ($("#vou_tbl>tbody>tr.filter").length == 0) {
+                if ($("#vou_tbl>tbody>tr.filter:not(#search-noresults)").length == 0) {
+                    console.log("Keine Ergebnisse");
                     $("#vou_tbl>tbody>tr").each(function() {
                         $(this).hide();
                     });
                     if ($("#search-noresults").val() == null) {
                         $("#vou_tbl>tbody").append("<tr id=\"search-noresults\"><td colspan=\"5\" class=\"text-center\"><i><?=TRANSLATION["no_elements"]?></i></td></tr>");
                     }
+                    $("#search-noresults").show();
                 } else {
                     $("#search-noresults").remove();
                     $("#vou_tbl>tbody>tr").each(function() {
@@ -543,7 +542,7 @@
                 }
             });
 
-            $(".vou-lst, .row-checkbox").click(function() {
+            $(".ckb-lst, .row-checkbox").click(function() {
                 checkbox_toggle($(this).data("id"))
             });
 

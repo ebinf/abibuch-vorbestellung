@@ -21,16 +21,26 @@
     }
 ?>
 <div class="col-12 col-sm-8 p-3 bg-light border-0 cont">
-    <h1 class="display-3"><?=sprintf(TRANSLATION["title"], htmlspecialchars(globalfield($query["general_fields"], "firstname"), ENT_NOQUOTES))?></h1>
+    <h1 class="d-none d-md-block display-3"><?=sprintf(TRANSLATION["title"], globalfield($query["general_fields"], "firstname"))?></h1>
+    <h1 class="d-block d-md-none display-4"><?=sprintf(TRANSLATION["title"], globalfield($query["general_fields"], "firstname"))?></h1>
     <h2><?=TRANSLATION["overview"]?></h2>
 
     <div class="w-100 bg-primary text-light p-2 mb-3">
         <?php
 
-            if (strpos($query["status"], "paid") !== false) {
+            if (in_array("paid", explode(",", $query["status"]))) {
                 ?>
-                    <h3 class="text-light m-0"><?=TRANSLATION["payment"]?>: <span class="text-success"><?=TRANSLATION["paid"]?></span> <small>(<?php printf(TRANSLATION["paid_extra"], date("d.m.Y", strtotime($query["paid_timestamp"]))); ?>)</small></h3>
+                    <h3 class="text-light m-0"><?=TRANSLATION["payment"]?>: <span class="text-success"><?=TRANSLATION["paid"]?></span> <small>(<?php printf(TRANSLATION["paid_extra"], date(TRANSLATION["date_time_format"]["date_long"], strtotime($query["paid_timestamp"]))); ?>)</small></h3>
                 <?php
+                if (in_array("delivered", explode(",", $query["status"]))) {
+                    ?>
+                        <h3 class="text-light m-0"><?=TRANSLATION["delivery"]?>: <span class="text-success"><?=TRANSLATION["delivered"]?></span> <small>(<?php printf(TRANSLATION["delivered_extra"], date(TRANSLATION["date_time_format"]["date_long"], strtotime($query["paid_timestamp"]))); ?>)</small></h3>
+                    <?php
+                } else {
+                    ?>
+                        <h3 class="text-light m-0"><?=TRANSLATION["delivery"]?>: <span class="text-danger"><?=TRANSLATION["undelivered"]?></span></h3>
+                    <?php
+                }
             } else {
                 ?>
                     <h3 class="text-light"><?=TRANSLATION["payment"]?>: <span class="text-danger"><?=TRANSLATION["unpaid"]?></span></h3>
@@ -43,15 +53,19 @@
     <div class="w-100 p-2 mb-3">
         <?php
 
-            if (strpos($query["status"], "paid") === false && file_exists("./data/payments/" . find_in_json(CONFIG["payment"], "name", $query["payment"])["info"] . ".php")) {
-                $paymentinfo = include("./data/payments/" . find_in_json(CONFIG["payment"], "name", $query["payment"])["info"] . ".php");
+            if (!in_array("paid", explode(",", $query["status"])) && file_exists("./data/payment/" . find_in_json(CONFIG["payment"], "name", $query["payment"])["info"] . ".php")) {
+                $paymentinfo = include("./data/payment/" . find_in_json(CONFIG["payment"], "name", $query["payment"])["info"] . ".php");
 
                 echo patternmatch($paymentinfo, $query);
+            } elseif (in_array("paid", explode(",", $query["status"])) && !in_array("delivered", explode(",", $query["status"])) && file_exists("./data/delivery/" . find_in_json(CONFIG["delivery"], "name", $query["delivery"])["info"] . ".php")) {
+                $deliveryinfo = include("./data/delivery/" . find_in_json(CONFIG["delivery"], "name", $query["delivery"])["info"] . ".php");
+
+                echo patternmatch($deliveryinfo, $query);
             }
 
         ?>
     </div>
-    <div class="w-100 position-fixed d-block d-sm-none text-center" style="left: 0; right: 0; bottom: 0; z-index: 1;"><h2><i class="ion-ios-arrow-down" aria-hidden="true" onclick="$('html, body').animate({ scrollTop: $('#secondView').offset().top }, 1000);"></i></h2></div>
+    <div class="w-100 position-fixed d-block d-sm-none text-center" style="left: 0; right: 0; bottom: 0; z-index: 1;"><h2><i class="ion-ios-arrow-down" aria-hidden="true" onclick="$('html, body').animate({ scrollTop: $('#secondView').offset().top }, 1000);" style="text-shadow: #ffffff 0 0 5px;"></i></h2></div>
 </div>
 <div class="p-2 col-12 col-sm-4 bg-primary text-light border-0" style="z-index: 5;" id="secondView">
     <h3 class="text-light"><?=TRANSLATION["order"]?></h3>

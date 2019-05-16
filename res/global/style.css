@@ -17,7 +17,7 @@ body {
 
 @media (max-width: 768px) {
     html, body {
-        height: auto !important;
+        height: unset !important;
         min-height: 100%;
     }
 

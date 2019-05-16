@@ -1,5 +1,5 @@
 <?php
-    session_start();
+
 
     define('BASEURL', explode("/admin/index.php", $_SERVER["SCRIPT_NAME"])[0]);
     define('RESDIR', BASEURL . "/res");
@@ -12,11 +12,6 @@
     $request = strtolower(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : (isset($_SERVER['ORIG_PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : '/'));
     $expl = explode("/", $request);
     $menu = $expl[1];
-
-    if (sizeof($expl) <= 1) {
-        header("Location: " . ADMIN . "/dashboard");
-        exit;
-    }
 
     if (!CONFIG["general"]["allow_insecure"] && (!isset($_SERVER["HTTPS"]) || (strtolower($_SERVER["HTTPS"]) != "on" && $_SERVER["HTTPS"] != 1))) {
         header("Location: " . str_replace("http://", "https://", ABSPATH) . $request);
@@ -37,10 +32,33 @@
         exit;
     }
 
+    if ($menu == "api") {
+        require("./views/api.php");
+        exit;
+    }
+
+    if (sizeof($expl) <= 1) {
+        header("Location: " . ADMIN . "/dashboard");
+        exit;
+    }
+
     if ($menu == "noscript") {
         require("./views/noscript.php");
         exit;
     }
+
+    if (session_status() != PHP_SESSION_ACTIVE) {
+        ini_set('session.use_strict_mode', 1);
+        ini_set('session.gc_maxlifetime', 43200);
+        ini_set('session.use_cookies', 1);
+        ini_set('session.use_only_cookies', 1);
+        ini_set('session.cookie_httponly', 1);
+        ini_set('session.cookie_samesite', 'strict');
+        if (CONFIG["general"]["allow_insecure"] == false) {
+            ini_set('session.cookie_secure', 1);
+        }
+    }
+    session_start();
 
     if ($menu == "login") {
         require("./views/login.php");
@@ -52,13 +70,6 @@
         exit;
     }
 
-    if((time() - $_SESSION["last_activity"]) > CONFIG["general"]["timeout"]) {
-        session_destroy();
-        header("Location: " . ADMIN . "/login?timeout");
-        exit;
-    }
-    $_SESSION["last_activity"] = time();
-
     $user = $con->query("SELECT id, username, name, sessionhash FROM " . DBPREFIX . "users WHERE id = " . $con->real_escape_string($_SESSION["login_id"]));
     if ($user->num_rows != 1) {
         session_destroy();
@@ -67,21 +78,14 @@
     }
 
     $user = $user->fetch_assoc();
-    if ($_SESSION["login_hash"] != $user["sessionhash"] ) {
+    if ($_SESSION["login_hash"] != $user["sessionhash"] || (time() - $_SESSION["last_activity"]) > CONFIG["general"]["timeout"]) {
         session_destroy();
-        header("Location: " . ADMIN . "/login?timeout");
+        unset($expl[0]);
+        header("Location: " . ADMIN . "/login?timeout&refer=" . join("/", $expl));
         exit;
     }
+    $_SESSION["last_activity"] = time();
 
-    if ($menu == "logout" && sizeof($expl) == 3 && $expl[2] == "all-sessions") {
-        if (isset($_POST["token"]) && base64_decode($_POST["token"]) == md5("lgo_all_sessions" . $user["id"] . $user["username"])) {
-            $con->query("UPDATE " . DBPREFIX . "users SET sessionhash='" . $con->real_escape_string(base64_encode(md5(time()))) . "' WHERE id = " . $user["id"]);
-        } else {
-            $_SESSION["alert"] = ["danger", "admin_error"];
-            header("Location: " . ADMIN . "/user");
-            exit;
-        }
-    }
 
 ?>
 <!DOCTYPE html>
@@ -106,7 +110,7 @@
         ?>
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary sticky-top">
             <a class="navbar-brand" href="./"><?=TRANSLATION["administration"]?></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav_bar" aria-controls="nav_bar" aria-expanded="false" aria-label="<?=TRANSLATION["toggle_navigation"]?>">
                 <span class="navbar-toggler-icon"></span>
@@ -116,22 +120,28 @@
                     <li class="nav-item<?=($menu=="dashboard"?" active":"")?>">
                         <a class="nav-link" href="<?=ADMIN?>/dashboard"><?=TRANSLATION["dashboard"]?></a>
                     </li>
-                    <li class="nav-item<?=($menu=="orders"?" active":"")?>">
-                        <a class="nav-link" href="<?=ADMIN?>/orders"><?=TRANSLATION["orders"]?></a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle<?=($menu=="orders"||$menu=="vouchers"||$menu=="payment"?" active":"")?>" href="#" id="data-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=TRANSLATION["data"]?></a>
+                        <div class="dropdown-menu" aria-labelledby="data-dropdown">
+                            <a class="dropdown-item<?=($menu=="orders"?" active":"")?>" href="<?=ADMIN?>/orders"><?=TRANSLATION["orders"]?></a>
+                            <a class="dropdown-item<?=($menu=="vouchers"?" active":"")?>" href="<?=ADMIN?>/vouchers"><?=TRANSLATION["vouchers"]?></a>
+                            <a class="dropdown-item<?=($menu=="payment"?" active":"")?>" href="<?=ADMIN?>/payment"><?=TRANSLATION["payment"]?></a>
+                        </div>
                     </li>
-                    <li class="nav-item<?=($menu=="vouchers"?" active":"")?>">
-                        <a class="nav-link" href="<?=ADMIN?>/vouchers"><?=TRANSLATION["vouchers"]?></a>
-                    </li>
-                    <li class="nav-item<?=($menu=="payment"?" active":"")?>">
-                        <a class="nav-link" href="<?=ADMIN?>/payment"><?=TRANSLATION["payment"]?></a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle<?=($menu=="settings"||$menu=="users"||$menu=="api-tokens"?" active":"")?>" href="#" id="system-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=TRANSLATION["system"]?></a>
+                        <div class="dropdown-menu" aria-labelledby="system-dropdown">
+                            <a class="dropdown-item<?=($menu=="settings"?" active":"")?>" href="<?=ADMIN?>/settings"><?=TRANSLATION["settings"]?></a>
+                            <a class="dropdown-item<?=($menu=="users"?" active":"")?>" href="<?=ADMIN?>/users"><?=TRANSLATION["users"]?></a>
+                            <a class="dropdown-item<?=($menu=="api-tokens"?" active":"")?>" href="<?=ADMIN?>/api-tokens"><?=TRANSLATION["api_tokens"]?></a>
+                        </div>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown mr-0">
-                        <a class="nav-link dropdown-toggle<?=($menu=="user"?" active":"")?>" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=$user["name"]?></a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="nav-link dropdown-toggle<?=($menu=="user"?" active":"")?>" href="#" id="user-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?=$user["name"]?></a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-dropdown">
                             <a class="dropdown-item<?=($menu=="user" && sizeof($expl) == 2?" active":"")?>" href="<?=ADMIN?>/user"><?=TRANSLATION["account"]?></a>
-                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="<?=ADMIN?>/logout"><?=TRANSLATION["logout"]?></a>
                         </div>
                     </li>
@@ -141,21 +151,29 @@
         <div class="p-2 container">
             <?php
 
-                function alert($type, $title, $text) {
+                function alert($type, $title, $text, $undo="") {
                     echo '<div class="fixed-bottom">
                         <div class="alert alert-dismissible alert-' . $type . ' fade show mb-0">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                             <h4 class="alert-heading">' . $title . '</h4>
-                            <p class="mb-0">' . $text . '</p>
+                            <p class="mb-0">' . $text . (strlen($undo) > 0 ? " <a class=\"alert-link\" href=\"" . $undo . "\"><i class=\"ion-md-undo\"></i> " . TRANSLATION["undo"] . "</a>" : "") . '</p>
                         </div>
                     </div>';
                 }
 
                 if (isset($_SESSION["alert"])) {
                     if (sizeof($_SESSION["alert"]) == 2) {
-                        alert($_SESSION["alert"][0], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_title"], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_message"]);
+                        if (is_array($_SESSION["alert"][1])) {
+                            alert($_SESSION["alert"][0], $_SESSION["alert"][1][0], $_SESSION["alert"][1][1]);
+                        } else {
+                            alert($_SESSION["alert"][0], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_title"], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_message"]);
+                        }
                     } elseif (sizeof($_SESSION["alert"]) == 3) {
-                        alert($_SESSION["alert"][0], $_SESSION["alert"][1], $_SESSION["alert"][2]);
+                        if (is_array($_SESSION["alert"][1])) {
+                            alert($_SESSION["alert"][0], $_SESSION["alert"][1][0], $_SESSION["alert"][1][1], $_SESSION["alert"][2]);
+                        } else {
+                            alert($_SESSION["alert"][0], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_title"], TRANSLATION["alerts"][$_SESSION["alert"][1] . "_message"], $_SESSION["alert"][2]);
+                        }
                     }
                     unset($_SESSION["alert"]);
                 }
@@ -177,11 +195,25 @@
                         require("./views/payment.php");
                         exit;
 
+                    case "api-tokens":
+                        require("./views/api-tokens.php");
+                        exit;
+
                     case "user":
                         require("./views/user.php");
                         exit;
 
                     case "logout":
+                        if (sizeof($expl) == 3 && $expl[2] == "all-sessions") {
+                            if (isset($_POST["token"]) && base64_decode($_POST["token"]) == md5("lgo_all_sessions" . $user["id"] . $user["username"])) {
+                                $con->query("UPDATE " . DBPREFIX . "users SET sessionhash='" . $con->real_escape_string(base64_encode(md5(time()))) . "' WHERE id = " . $user["id"]);
+                            } else {
+                                $_SESSION["alert"] = ["danger", "admin_error"];
+                                header("Location: " . ADMIN . "/user");
+                                exit;
+                            }
+                        }
+                        session_unset();
                         session_destroy();
                         header("Location: " . ADMIN . "/login?logout");
                         exit;

@@ -7,7 +7,8 @@
 
 ?>
 <div class="col-12 col-sm-8 bg-light border-0 cont">
-    <h1 class="display-3"><?=TRANSLATION["welcome_title"]?></h1>
+    <h1 class="d-none d-md-block display-3"><?=TRANSLATION["welcome_title"]?></h1>
+    <h1 class="d-block d-md-none display-4"><?=TRANSLATION["welcome_title"]?></h1>
     <h3><?=TRANSLATION["welcome_content"]?></h3>
     <?php
 

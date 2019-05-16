@@ -7,7 +7,8 @@
 
 ?>
 <div class="col-12 col-sm-8 p-3 bg-light border-0 cont">
-    <h1 class="display-3"><?=TRANSLATION["welcome_title"]?></h1>
+    <h1 class="d-none d-md-block display-3"><?=TRANSLATION["welcome_title"]?></h1>
+    <h1 class="d-block d-md-none display-4"><?=TRANSLATION["welcome_title"]?></h1>
     <div class="card text-white bg-warning mb-3">
         <div class="card-body">
             <h4 class="card-title"><?=TRANSLATION["alerts"]["no_orders_title"]?></h4>

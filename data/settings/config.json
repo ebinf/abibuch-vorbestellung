@@ -4,15 +4,15 @@
         "rewrite": true,
         "allow_insecure": false,
         "locale": "de_DE",
-        "order_till": "01.01.2099",
-        "pay_till": "01.01.2001",
-        "contact_email": "support@ebinf.eu",
+        "order_till": "17.05.2019 23:59:59",
+        "pay_till": "24.05.2019",
+        "contact_email": "abibuch@ebinf.eu",
         "firstname": "firstname",
         "email": "email",
         "email_name": "{{general:firstname}} {{general:lastname}}",
         "timeout": 1800,
         "overview_hide_type": false,
-        "overview_hide_payment": false,
+        "overview_hide_payment": true,
         "overview_hide_delivery": false
     },
     "types": [
@@ -50,8 +50,7 @@
                 "label": "E-Mail-Adresse",
                 "type": "email",
                 "width": 5,
-                "autocomplete": "email",
-                "show_in_overview": true
+                "autocomplete": "email"
             }
         ],
         "types": {
@@ -93,8 +92,7 @@
                         "type": "text",
                         "minlength": 4,
                         "width": 12,
-                        "autocomplete": "address-line1",
-                        "show_in_overview": true
+                        "autocomplete": "address-line1"
                     },
                     {
                         "name": "address2",
@@ -102,8 +100,7 @@
                         "type": "text",
                         "not_required": true,
                         "width": 12,
-                        "autocomplete": "address-line2",
-                        "show_in_overview": true
+                        "autocomplete": "address-line2"
                     },
                     {
                         "name": "zip",
@@ -112,8 +109,7 @@
                         "pattern": "[0-9]{5}",
                         "maxlength": 5,
                         "width": 4,
-                        "autocomplete": "postal-code",
-                        "show_in_overview": true
+                        "autocomplete": "postal-code"
                     },
                     {
                         "name": "city",
@@ -121,53 +117,42 @@
                         "type": "text",
                         "minlength": 3,
                         "width": 8,
-                        "autocomplete": "address-level2",
-                        "show_in_overview": true
+                        "autocomplete": "address-level2"
                     }
                 ]
         },
-        "payment": {
-            "bar": [
-                {
-                    "name": "secret",
-                    "label": "Geheimwort für die Bezahlung",
-                    "type": "password",
-                    "minlength": 3,
-                    "width": 12,
-                    "autocomplete": "new-password",
-                    "show_in_overview": true
-                }
-            ]
-        }
+        "payment": {}
     },
     "product": {
         "name": "Abibuch",
         "name_plural": "Abibücher",
-        "description": "300 Seiten, Hardcover",
+        "description": "circa 240 Seiten, Hardcover",
         "unit": {
             "prefix": "",
             "prefix_plural": "",
             "suffix": "Stück",
             "suffix_plural": "Stück"
         },
-        "price": 16.5,
+        "price": 18.5,
         "min": 1,
         "max": 5
     },
     "delivery": [
         {
             "name": "akademische_feier",
-            "title": "Abholung bei der akademischen Feier",
-            "price": -3.5,
+            "title": "Abholung",
+            "price": 0,
+            "info": "abholung",
             "description": "Ich möchte mein Abibuch bei der akademischen Feier abholen.",
             "fieldset": "",
-            "data": ""
+            "data": "bei der akademischen Feier"
         },
         {
             "name": "fach",
             "title": "Hinterlegung im Fach",
             "price": 0,
             "description": "Mein Abibuch soll in mein Fach gelegt werden.",
+            "info": "",
             "types": ["lul"],
             "fieldset": "",
             "data": "Kürzel: {{type:kuerzel}}"
@@ -175,9 +160,9 @@
         {
             "name": "versand",
             "title": "Lieferung",
-            "price": 5,
+            "price": 6,
             "description": "Ich möchte mein Abibuch per Post zugesendet bekommen.",
-            "types": ["lul"],
+            "info": "",
             "fieldset": "postal",
             "data": "{{general:firstname}} {{general:lastname}}<br />{{delivery:address2}}<br />{{delivery:address1}}<br />{{delivery:zip}} {{delivery:city}}"
         }
@@ -190,15 +175,6 @@
             "info": "ueberweisung",
             "description": "Ich möchte überweisen.",
             "fieldset": "",
-            "data": ""
-        },
-        {
-            "name": "bar",
-            "title": "Barbezahlung",
-            "price": 3.5,
-            "info": "",
-            "description": "Ich möchte bar bezahlen.",
-            "fieldset": "bar",
             "data": ""
         }
     ]

@@ -41,6 +41,9 @@
                             $iv = substr($encrypted, 0, openssl_cipher_iv_length(TFA_CIPHER));
                             $decrypted_raw = substr($encrypted, openssl_cipher_iv_length(TFA_CIPHER));
                             $_SESSION["login_2fa"] = [$query["id"], openssl_decrypt($decrypted_raw, TFA_CIPHER, hash("sha256", $_POST["lgi_pss"]), 0, $iv)];
+                            if (isset($_POST["lgi_ref"])) {
+                                $_SESSION["login_refer"] = $_POST["lgi_ref"];
+                            }
                         }
                     } else {
                         $login_error = "login_wrong";
@@ -49,8 +52,13 @@
                     $login_error = "login_wrong";
                 }
                 unset($query);
-                if (!isset($login_error)) {
-                    header("Location: " . ADMIN . "/dashboard");
+                if (!isset($login_error) && !isset($_SESSION["login_2fa"])) {
+                    if (isset($_POST["lgi_ref"])) {
+                        header("Location: " . ADMIN . "/" . $_POST["lgi_ref"]);
+                        var_dump($_POST["lgi_ref"]);
+                    } else {
+                        header("Location: " . ADMIN . "/dashboard");
+                    }
                     exit;
                 }
             }
@@ -77,7 +85,12 @@
                 $login_error = "admin_error";
             } finally {
                 if (!isset($login_error)) {
-                    header("Location: " . ADMIN . "/dashboard");
+                    if (isset($_SESSION["login_refer"])) {
+                        header("Location: " . ADMIN . "/" . $_SESSION["login_refer"]);
+                        unset($_SESSION["login_refer"]);
+                    } else {
+                        header("Location: " . ADMIN . "/dashboard");
+                    }
                     exit;
                 }
             }
@@ -102,7 +115,12 @@
                             header("Location: " . ADMIN . "/user/two-factor-authentication/backupcodes");
                             exit;
                         }
-                        header("Location: " . ADMIN . "/dashboard");
+                        if (isset($_SESSION["login_refer"])) {
+                            header("Location: " . ADMIN . "/" . $_SESSION["login_refer"]);
+                            unset($_SESSION["login_refer"]);
+                        } else {
+                            header("Location: " . ADMIN . "/dashboard");
+                        }
                         exit;
                     }
                 }
@@ -113,7 +131,7 @@
 
 ?>
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" class="h-100">
     <head>
         <title><?=TRANSLATION["administration"]?> – <?=CONFIG["general"]["title"]?></title>
         <meta charset="utf-8">
@@ -124,13 +142,13 @@
         <script src="<?=RESDIR?>/bootstrap/js/jquery.min.js"></script>
         <script src="<?=RESDIR?>/bootstrap/js/bootstrap.min.js"></script>
     </head>
-    <body class="d-flex justify-content-end">
-        <div class="col-12 col-lg-4 h-100 bg-light border-0 w-auto text-right d-flex flex-column justify-content-between cont">
-            <div>
+    <body class="h-100 d-flex justify-content-end">
+        <div class="col-12 col-lg-4 h-100 bg-light border-0 w-auto text-right d-flex flex-wrap align-content-between">
+            <div class="col-12">
                 <h1 class="display-3"><?=TRANSLATION["login"]?></h1>
                 <p class="lead"><?=TRANSLATION["login_info"]?></p>
             </div>
-            <div>
+            <div class="col-12">
                 <?php
 
                 if (isset($_SESSION["login_2fa"])) {
@@ -202,7 +220,7 @@
                                 </div>
                         <?php } ?>
                             </div>
-                            <div class="text-center">
+                            <div class="col-12 text-center">
                                 <h6><a href="./login?abort" class="mb-1"><?=TRANSLATION["abort"]?></a></h6>
                             </div>
             <?php } else { ?>
@@ -216,9 +234,12 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-block shadow"><?=TRANSLATION["login"]?></button>
                     </div>
+                    <?php if (isset($_GET["refer"])) { ?>
+                        <input type="hidden" name="lgi_ref" value="<?=$_GET["refer"]?>" />
+                    <?php } ?>
                 </form>
                 </div>
-                <div>
+                <div class="col-12 text-center">
                     <h6><a href="<?=(strlen(RELPATH) == 0 ? "/" : RELPATH)?>" class="mb-1"><i class="fa fa-angle-left" aria-hidden="true"></i> <?=TRANSLATION["back_to"]?> <?=CONFIG["general"]["title"]?></a></h6>
                 </div>
             <?php } ?>

@@ -19,5 +19,4 @@
     require(RESDIRABS . "/res/otphp/OTP.php");
     require(RESDIRABS . "/res/otphp/TOTPInterface.php");
     require(RESDIRABS . "/res/otphp/TOTP.php");
-    require(RESDIRABS . "/res/phpqrcode/phpqrcode.php");
 ?>

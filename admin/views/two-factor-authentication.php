@@ -153,11 +153,6 @@
             $otp->setLabel($user["username"]);
             $_SESSION["2fa_provisioning_url"] = $otp->getProvisioningUri();
         }
-        ob_start();
-        QRcode::png($otp->getProvisioningUri(), false);
-        $qr = base64_encode(ob_get_contents());
-        ob_end_clean();
-        header("Content-type: text/html");
 
         ?>
         <p class="lead"><?=TRANSLATION["2fa_lead"]?></p>
@@ -172,7 +167,7 @@
                         </div>
                     </div>
                     <div class="text-center">
-                        <img src="data:image/png;utf8;base64,<?=$qr?>">
+                        <img src="<?=qr($otp->getProvisioningUri())?>">
                     </div>
                 </li>
                 <li>

@@ -53,7 +53,7 @@
         <?php } ?>
     </head>
     <body class="d-flex justify-content-center align-items-center flex-column">
-        <div class="d-flex col-xl-9 col-12 p-0 align-items-stretch flex-column flex-sm-row shadow cont">
+        <div class="d-flex col-xl-9 col-12 p-0 align-items-stretch flex-column flex-sm-row text-break shadow cont">
             <?php
 
                 function alert($type, $title, $text) {

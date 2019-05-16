@@ -44,6 +44,24 @@
     $mail->CharSet = "UTF-8";
     unset($em_addr, $em_auth, $em_host, $em_pass, $em_port, $em_prot, $em_user);
 
+    function qr($content, $ecc="Q", $pixels=4) {
+        require_once(RESDIRABS . "/res/phpqrcode/qrlib.php");
+        ob_start();
+        if (strtoupper($ecc) == "L") {
+            $ecc = QR_ECLEVEL_L;
+        } elseif (strtoupper($ecc) == "M") {
+            $ecc = QR_ECLEVEL_M;
+        } elseif (strtoupper($ecc) == "H") {
+            $ecc = QR_ECLEVEL_H;
+        } else {
+            $ecc = QR_ECLEVEL_Q;
+        }
+        QRcode::png($content, false, $ecc, $pixels);
+        $qr = base64_encode(ob_get_contents());
+        ob_end_clean();
+        return "data:image/png;utf8;base64," . $qr;
+    }
+
     function globalfield($fields, $name) {
         return $fields[CONFIG["general"][$name]];
     }
@@ -116,7 +134,7 @@
         return $reppattern;
     }
 
-    function patternmatch($input, $query=NULL, $doconfig=false, $config=CONFIG, $dotranslation=true, $translation=TRANSLATION, $remove_unused=true) {
+    function patternmatch($input, $query=NULL, $doconfig=false, $config=CONFIG, $dotranslation=true, $translation=TRANSLATION, $remove_unused=true, $doqr=true) {
         global $baseurl;
         if (is_array($query)) {
             $reppattern = array(
@@ -146,16 +164,18 @@
             $reppattern += repadd($translation, "translation");
         }
         if (is_array($input)) {
-            $input = strtr(json_encode($input), $reppattern);
-            if ($remove_unused) {
-                $input = preg_replace("({{.+?}})", "", $input);
-            }
+            $isarray = true;
+            $input = json_encode($input);
+        }
+        $input = strtr($input, $reppattern);
+        if ($doqr && preg_match("/{{qr}}(.+?){{\/qr}}/", $input)) {
+            $input = preg_replace_callback("/{{qr}}(.+?){{\/qr}}/", function ($br) { return qr($br[1], "H", 9); }, $input);
+        }
+        if ($remove_unused) {
+            $input = preg_replace("({{.+?}})", "", $input);
+        }
+        if (isset($isarray)) {
             $input = json_decode($input, true);
-        } else {
-            $input = strtr($input, $reppattern);
-            if ($remove_unused) {
-                $input = preg_replace("({{.+?}})", "", $input);
-            }
         }
         return $input;
     }

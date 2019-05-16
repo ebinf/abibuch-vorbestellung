@@ -25,7 +25,7 @@
     $generalfields = [];
     foreach (CONFIG["fields"]["general"] as $field) {
         if (validate_field($step1, $field)) {
-            $generalfields[$field["name"]] = $step1[$field["name"]];
+            $generalfields[$field["name"]] = strip_tags($step1[$field["name"]], ENT_NOQUOTES);
         } else {
             die("error");
         }
@@ -34,9 +34,33 @@
     $typefields = [];
     foreach (CONFIG["fields"]["types"][$step1["type"]] as $field) {
         if (validate_field($step1, $field)) {
-            $typefields[$field["name"]] = $step1[$field["name"]];
+            $typefields[$field["name"]] = strip_tags($step1[$field["name"]], ENT_NOQUOTES);
         } else {
             die("error");
+        }
+    }
+
+    $paymentfields = [];
+    $paymentfieldset = find_in_json(CONFIG["payment"], "name", $_POST["payment"])["fieldset"];
+    if (strlen($paymentfieldset) > 0) {
+        foreach (CONFIG["fields"]["payment"][$paymentfieldset] as $field) {
+            if (validate_field($_POST["payment_form"], $field)) {
+                $paymentfields[$field["name"]] = strip_tags($_POST["payment_form"][$field["name"]], ENT_NOQUOTES);
+            } else {
+                die("error");
+            }
+        }
+    }
+
+    $deliveryfields = [];
+    $deliveryfieldset = find_in_json(CONFIG["delivery"], "name", $_POST["delivery"])["fieldset"];
+    if (strlen($deliveryfieldset) > 0) {
+        foreach (CONFIG["fields"]["delivery"][$deliveryfieldset] as $field) {
+            if (validate_field($_POST["delivery_form"], $field)) {
+                $deliveryfields[$field["name"]] = strip_tags($_POST["delivery_form"][$field["name"]], ENT_NOQUOTES);
+            } else {
+                die("error");
+            }
         }
     }
 
@@ -89,10 +113,9 @@
     }
 
     $payment = $_POST["payment"];
-    $payment_form = $_POST["payment_form"];
     if ($payment != "voucher" && $voucher != 0 && (-1 * $voucher) >= (($_POST["quantity"] * CONFIG["product"]["price"]) + find_in_json(CONFIG["delivery"], "name", $_POST["delivery"])["price"])) {
         $payment = "voucher";
-        $payment_form = "";
+        $paymentfields = [];
     }
 
     $price = ($_POST["quantity"] * CONFIG["product"]["price"]) + find_in_json(CONFIG["payment"], "name", $_POST["payment"])["price"] + find_in_json(CONFIG["delivery"], "name", $_POST["delivery"])["price"] + $voucher;
@@ -115,13 +138,13 @@
         CURRENT_TIMESTAMP,
         '" . $ordernr . "',
         '" . bin2hex(random_bytes(8)) . "',
-        '" . $con->real_escape_string(json_encode($generalfields)) . "',
+        '" . $con->real_escape_string(json_encode($generalfields, JSON_UNESCAPED_UNICODE)) . "',
         '" . $con->real_escape_string($step1["type"]) . "',
-        '" . $con->real_escape_string(json_encode($typefields)) . "',
+        '" . $con->real_escape_string(json_encode($typefields, JSON_UNESCAPED_UNICODE)) . "',
         '" . $con->real_escape_string($_POST["delivery"]) . "',
-        '" . $con->real_escape_string(json_encode($_POST["delivery_form"])) . "',
+        '" . $con->real_escape_string(json_encode($deliveryfields, JSON_UNESCAPED_UNICODE)) . "',
         '" . $con->real_escape_string($payment) . "',
-        '" . $con->real_escape_string(json_encode($payment_form)) . "',
+        '" . $con->real_escape_string(json_encode($paymentfields, JSON_UNESCAPED_UNICODE)) . "',
         '" . $con->real_escape_string($_POST["quantity"]) . "',
         '" . $con->real_escape_string($price) . "',
         'ordered'

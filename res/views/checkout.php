@@ -34,7 +34,8 @@
 
 ?>
 <div class="col-12 col-sm-8 p-3 bg-light border-0 cont">
-    <h1 class="display-3"><?php printf(TRANSLATION["title"], htmlspecialchars($_POST["inp_" . CONFIG["general"]["firstname"]], ENT_NOQUOTES)); ?></h1>
+    <h1 class="d-none d-md-block display-3"><?=sprintf(TRANSLATION["title"], htmlspecialchars($_POST["inp_" . CONFIG["general"]["firstname"]], ENT_NOQUOTES)); ?></h1>
+    <h1 class="d-block d-md-none display-4"><?=sprintf(TRANSLATION["title"], htmlspecialchars($_POST["inp_" . CONFIG["general"]["firstname"]], ENT_NOQUOTES)); ?></h1>
     <div class="w-100 bg-primary text-light p-2 mb-3">
         <table class="w-100">
             <tr>
@@ -165,7 +166,7 @@
             echo $del_cont;
 
         ?>
-        <div class="w-100 position-fixed d-block d-sm-none text-center" style="left: 0; right: 0; bottom: 0; z-index: 1;"><h2><i class="ion-ios-arrow-down" aria-hidden="true" onclick="$('html, body').animate({ scrollTop: $('#secondView').offset().top }, 1000);"></i></h2></div>
+        <div class="w-100 position-fixed d-block d-sm-none text-center" style="left: 0; right: 0; bottom: 0; z-index: 1;"><h2><i class="ion-ios-arrow-down" aria-hidden="true" onclick="$('html, body').animate({ scrollTop: $('#secondView').offset().top }, 1000);" style="text-shadow: #ffffff 0 0 5px;"></i></h2></div>
     </div>
     <div class="p-2 col-12 col-sm-4 bg-primary text-light border-0" style="z-index: 5;" id="secondView">
     <h3 class="text-light"><?=TRANSLATION["order"]?></h3>
