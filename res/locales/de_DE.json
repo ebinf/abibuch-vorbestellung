@@ -82,7 +82,9 @@
         "admin_undo_cancellation_title": "Stornierung rückgängig gemacht.",
         "admin_undo_cancellation_message": "Die Stornierung der Bestellung wurde erfolgreich rückgängig gemacht.",
         "revoked_successfully_title": "Widerrufen.",
-        "revoked_successfully_message": "Der gewählte API-Token wurde erfolgreich widerrufen."
+        "revoked_successfully_message": "Der gewählte API-Token wurde erfolgreich widerrufen.",
+        "emails_send_title": "E-Mails versendet.",
+        "emails_send_message": "Die E-Mails wurden erfolgreich versendet."
     },
     "welcome_title": "Hallo!",
     "welcome_content": "Bitte gib deine Daten ein, um die Bestellung zu starten.",
@@ -118,6 +120,7 @@
     "cancel_paid_subject": "Bestellung stornieren",
     "abort": "Abbrechen",
     "order_confirmation": "Bestellbestätigung",
+    "order_reminder": "Abibuch: Erinnerung",
     "voucher": "Gutschein",
     "voucher_field": "Ich habe einen Gutscheincode",
     "voucher_invalid": "Dieser Gutscheincode ist nicht gültig oder wurde bereits eingelöst.",

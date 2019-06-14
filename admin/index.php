@@ -203,6 +203,10 @@
                         require("./views/user.php");
                         exit;
 
+                    case "reminder":
+                        require("./views/reminder.php");
+                        exit;
+
                     case "logout":
                         if (sizeof($expl) == 3 && $expl[2] == "all-sessions") {
                             if (isset($_POST["token"]) && base64_decode($_POST["token"]) == md5("lgo_all_sessions" . $user["id"] . $user["username"])) {
