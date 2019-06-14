@@ -5,21 +5,22 @@
         exit;
     }
 
-    $query = $con->query("SELECT * FROM " . DBPREFIX . "orders WHERE id = 60");
-    while ($order = $query->fetch_assoc()) {
-        $order = query_expand_json($order);
+    #$query = $con->query("SELECT * FROM " . DBPREFIX . "orders WHERE id = 2 OR id = 60");
+    $query = $con->query("SELECT * FROM " . DBPREFIX . "orders WHERE delivery = 'akademische_feier' AND status = 'ordered,paid'");
+    while ($ordersg = $query->fetch_assoc()) {
+        $order = query_expand_json($ordersg);
         $mail->clearAddresses();
-        $mail->addAddress($order["generalfields"]["email"], patternmatch(CONFIG_RAW["general"]["email_name"], $order));
+        $mail->addAddress($order["general_fields"]["email"], patternmatch(CONFIG_RAW["general"]["email_name"], $order));
         $mail->Subject = TRANSLATION["order_reminder"];
         $mail->Body = patternmatch(file_get_contents(RESDIRABS . "/data/emails/reminder.php"), $order);
         if(!$mail->send()) {
            die("error");
         }
+        echo $order["general_fields"]["firstname"];
     }
-
-    $_SESSION["alert"] = ["success", "mails_send"];
-
-    header("Location: " . (strlen(RELPATH) == 0 ? "/" : RELPATH));
+    die();
+    $_SESSION["alert"] = ["success", "emails_send"];
+    header("Location: " . ADMIN);
     exit;
 
 ?>

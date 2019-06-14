@@ -59,11 +59,25 @@
                 function alert($type, $title, $text) {
                     echo '<div class="fixed-top">
                         <div class="alert alert-dismissible alert-' . $type . ' fade show">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <h4 class="alert-heading">' . $title . '</h4>
-                            <p class="mb-0">' . $text . '</p>
-                        </div>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>' .
+                            (!empty(trim($title)) ? '<h4 class="alert-heading">' . $title . '</h4>' : '') .
+                            (!empty(trim($text)) ? '<p class="mb-0">' . $text . '</p>' : '')
+                            . '</div>
                     </div>';
+                }
+
+                session_start();
+                $user = $con->query("SELECT id, username, name, sessionhash FROM " . DBPREFIX . "users WHERE id = " . $con->real_escape_string($_SESSION["login_id"]));
+                if ($user->num_rows != 1) {
+                    $user = [];
+                } else {
+                    $user = $user->fetch_assoc();
+                    alert("success", "", sprintf(TRANSLATION["loggedin_as"], "<b>" . $user["name"] . "</b>") . " <a href=\"./admin\" class=\"alert-link\">" . TRANSLATION["administration"] . "</a>.");
+                    if ($_SESSION["login_hash"] != $user["sessionhash"] || (time() - $_SESSION["last_activity"]) > CONFIG["general"]["timeout"]) {
+                        session_destroy();
+                        header("Location: " . (strlen(RELPATH) == 0 ? "/" : RELPATH));
+                        exit;
+                    }
                 }
 
                 $expl = explode("/", $request);
@@ -110,14 +124,14 @@
 
                         case "":
                         case "/":
-                            if (strtotime(CONFIG["general"]["order_till"]) > time()) {
+                            if (strtotime(CONFIG["general"]["order_till"]) > time() || !empty($user)) {
                                 require("./res/views/home.php");
                             } else {
                                 require("./res/views/noorders.php");
                             }
                             break;
                         case "/checkout":
-                            if (strtotime(CONFIG["general"]["order_till"]) > time()) {
+                            if (strtotime(CONFIG["general"]["order_till"]) > time() || !empty($user)) {
                                 require("./res/views/checkout.php");
                             } else {
                                 require("./res/views/noorders.php");

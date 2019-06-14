@@ -225,5 +225,6 @@
     "api_tokens_unused": "Nicht verwendet",
     "api_tokens_setup_qr": "Einrichtungs-QR-Code",
     "revoke": "Widerrufen",
-    "revoke_sure": "Bist du dir sicher, dass du den API-Token %s widerrufen willst?"
+    "revoke_sure": "Bist du dir sicher, dass du den API-Token %s widerrufen willst?",
+    "loggedin_as": "Angemeldet als %s."
 }

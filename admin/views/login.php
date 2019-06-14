@@ -138,7 +138,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="<?=RESDIR?>/bootstrap/css/bootstrap.min.css" />
         <link rel="stylesheet" href="<?=RESDIR?>/global/style.css" />
-        <link rel="stylesheet" href="<?=RESDIR?>/font-awesome/css/font-awesome.min.css" />
         <script src="<?=RESDIR?>/bootstrap/js/jquery.min.js"></script>
         <script src="<?=RESDIR?>/bootstrap/js/bootstrap.min.js"></script>
     </head>
@@ -240,7 +239,7 @@
                 </form>
                 </div>
                 <div class="col-12 text-center">
-                    <h6><a href="<?=(strlen(RELPATH) == 0 ? "/" : RELPATH)?>" class="mb-1"><i class="fa fa-angle-left" aria-hidden="true"></i> <?=TRANSLATION["back_to"]?> <?=CONFIG["general"]["title"]?></a></h6>
+                    <h6><a href="<?=(strlen(RELPATH) == 0 ? "/" : RELPATH)?>" class="mb-1"><?=TRANSLATION["back_to"]?> <?=CONFIG["general"]["title"]?></a></h6>
                 </div>
             <?php } ?>
         </div>
