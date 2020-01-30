@@ -67,18 +67,21 @@
                 }
 
                 session_start();
-                $user = $con->query("SELECT id, username, name, sessionhash FROM " . DBPREFIX . "users WHERE id = " . $con->real_escape_string($_SESSION["login_id"]));
-                if ($user->num_rows != 1) {
-                    $user = [];
-                } else {
-                    $user = $user->fetch_assoc();
-                    alert("success", "", sprintf(TRANSLATION["loggedin_as"], "<b>" . $user["name"] . "</b>") . " <a href=\"./admin\" class=\"alert-link\">" . TRANSLATION["administration"] . "</a>.");
-                    if ($_SESSION["login_hash"] != $user["sessionhash"] || (time() - $_SESSION["last_activity"]) > CONFIG["general"]["timeout"]) {
-                        session_destroy();
-                        header("Location: " . (strlen(RELPATH) == 0 ? "/" : RELPATH));
-                        exit;
-                    }
+                if (isset($_SESSION["login_id"])) {
+                  $user = $con->query("SELECT id, username, name, sessionhash FROM " . DBPREFIX . "users WHERE id = " . $con->real_escape_string($_SESSION["login_id"]));
+                  if ($user->num_rows != 1) {
+                      $user = [];
+                  } else {
+                      $user = $user->fetch_assoc();
+                      alert("success", "", sprintf(TRANSLATION["loggedin_as"], "<b>" . $user["name"] . "</b>") . " <a href=\"./admin\" class=\"alert-link\">" . TRANSLATION["administration"] . "</a>.");
+                      if ($_SESSION["login_hash"] != $user["sessionhash"] || (time() - $_SESSION["last_activity"]) > CONFIG["general"]["timeout"]) {
+                          session_destroy();
+                          header("Location: " . (strlen(RELPATH) == 0 ? "/" : RELPATH));
+                          exit;
+                      }
+                  }
                 }
+                session_write_close();
 
                 $expl = explode("/", $request);
                 if (sizeof($expl) > 1 && $expl[1] == "o") {
